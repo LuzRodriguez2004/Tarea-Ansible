@@ -1,0 +1,14 @@
+ansible_user: "publica"
+ansible_become_password: "mundolibre"
+
+
+# Variables para Rol LAMP (MariaDB)
+mariadb_root_password: "RootDB_Umss_2026!"
+mariadb_app_db: "app_lamp_db"
+mariadb_app_user: "lamp_user"
+mariadb_app_password: "Lamp_Umss_2026!"
+
+# Variables para Rol Samba
+samba_sys_user: "colab_samba"
+samba_user_password: "Samba_Umss_2026!"
+samba_share_path: ""
