@@ -48,34 +48,59 @@ en 'group_vars/all/credenciales.yml'.
 6. VERIFICAR CONECTIVIDAD Y ESCALACIÓN DE PRIVILEGIOS
    Compruebe que el nodo de control se comunica con el servidor openSUSE 16.0:
 
-   ansible opensuse_servers -m ping --ask-vault-pass
-   ansible opensuse_servers -m command -a "whoami" --become --ask-vault-pass
+   ansible opensuse_servers -m ping
+   ansible opensuse_servers -m command -a "whoami" --become
 
 7. EJECUTAR EL PLAYBOOK PRINCIPAL (DESPLIEGUE)
    Valide la sintaxis y ejecute el aprovisionamiento completo:
 
    ansible-playbook site.yml --syntax-check
-   ansible-playbook site.yml --ask-vault-pass
+   ansible-playbook site.yml
 
 8. COMPROBAR Y VALIDAR LOS SERVICIOS DESPLEGADOS
 
-   Una vez finalizada la ejecución del playbook sin errores, ejecute las
+   Una vez finalizada la ejecución exitosa del playbook, ejecute las siguientes 
+   pruebas desde el nodo central para validar el funcionamiento de cada servicio:
 
-   siguientes pruebas desde el nodo central:
+   1. Confirmar que todos los demonios están activos y ejecutándose correctamente:
+      (Debe retornar el estado "active" para cada servicio: apache2, mariadb, smb, nmb y vsftpd)
+   
+      ansible opensuse_servers -m shell -a "systemctl is-active apache2 mariadb smb nmb vsftpd" --become
 
-   # 1. Confirmar que todos los demonios están activos (active/running)
+   2. Verificar el servidor web Apache, PHP y phpMyAdmin:
+      - Comprobación del archivo de prueba PHP (información de versión y módulos):
 
-   ansible opensuse_servers -m shell -a "systemctl is-active apache2 mariadb smb nmb vsftpd" --become --ask-vault-pass
+         * URL de acceso web: http://192.168.1.15/info.php
 
-   # 2. Verificar que Apache y PHP responden por HTTP (cambia por tu IP destino)
+         * Comando de verificación por terminal:
 
-   curl -I http://192.168.1.x/info.php
+            curl -I http://192.168.1.15/info.php
 
-   curl -I http://192.168.1.x/phpMyAdmin/
+            (Resultado esperado: HTTP/1.1 200 OK)
 
-   # 3. Verificar que Samba lista el recurso compartido con el usuario creado
+      - Comprobación de la interfaz gráfica de administración:
 
-   smbclient -L //192.168.1.50 -U colab_samba
+         * URL de acceso web: http://192.168.1.15/phpMyAdmin/
+
+         * Comando de verificación por terminal:
+
+            curl -I http://192.168.1.15/phpMyAdmin/
+
+            (Resultado esperado: HTTP/1.1 200 OK o redirección 302)
+       
+         * Credenciales de acceso a phpMyAdmin:
+            - Usuario: lamp_user
+            - Contraseña: Lamp_Umss_2026!
+
+   3. Verificar el funcionamiento del servidor Samba:
+        Asegúrese de tener instalado el cliente Samba con:
+
+          sudo zypper install -y samba-client
+          
+        Ejecute el siguiente comando para listar los recursos compartidos:
+   
+        smbclient -L //192.168.1.15 -U "colab_samba%Samba_Umss_2026!"
+        (Resultado esperado: Visualización de la tabla con el recurso 'RecursosCompartidos')
 
 --------------------------------------------------------------------------------
 c) ESTRUCTURA DE ROLES IMPLEMENTADOS Y OPTIMIZACIÓN

@@ -1,6 +1,18 @@
 - name: Aprovisionamiento integral de LAMP, Samba, FTP en openSUSE 16.0
   hosts: opensuse_servers
   become: true
+  pre_tasks:
+    - name: Abrir puertos requeridos en el firewall (HTTP, HTTPS, Samba, FTP)
+      ansible.posix.firewalld:
+        service: "{{ item }}"
+        permanent: true
+        state: enabled
+        immediate: true
+      loop:
+        - http
+        - https
+        - samba
+        - ftp
   roles:
     - role: lamp
     - role: samba
