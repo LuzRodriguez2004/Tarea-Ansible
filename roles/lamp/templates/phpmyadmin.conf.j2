@@ -1,0 +1,9 @@
+Alias /phpMyAdmin /srv/www/htdocs/phpMyAdmin
+Alias /phpmyadmin /srv/www/htdocs/phpMyAdmin
+
+<Directory /srv/www/htdocs/phpMyAdmin>
+    Options FollowSymLinks
+    AllowOverride None
+    Require all granted
+    DirectoryIndex index.php
+</Directory>
