@@ -1,3 +1,5 @@
-#SPDX-License-Identifier: MIT-0
----
-# handlers file for roles/ftp
+- name: Reiniciar vsftpd
+  ansible.builtin.systemd:
+    name: vsftpd
+    state: restarted
+

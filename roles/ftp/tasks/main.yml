@@ -1,3 +1,21 @@
-#SPDX-License-Identifier: MIT-0
----
-# tasks file for roles/ftp
+- name: Instalar servidor FTP (vsftpd)
+  community.general.zypper:
+    name: vsftpd
+    state: present
+
+- name: Desplegar plantilla vsftpd.conf
+  ansible.builtin.template:
+    src: vsftpd.conf.j2
+    dest: /etc/vsftpd.conf
+    owner: root
+    group: root
+    mode: '0600'
+  notify: Reiniciar vsftpd
+
+- name: Iniciar y habilitar el servicio vsftpd
+  ansible.builtin.systemd:
+    name: vsftpd
+    state: started
+    enabled: true
+
+
