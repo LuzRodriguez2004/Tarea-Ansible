@@ -1,0 +1,7 @@
+- name: Aprovisionamiento integral de LAMP, Samba, FTP en openSUSE 16.0
+  hosts: opensuse_servers
+  become: true
+  roles:
+    - role: lamp
+    - role: samba
+    - role: ftp
