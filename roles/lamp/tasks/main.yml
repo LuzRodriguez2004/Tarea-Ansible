@@ -1,3 +1,84 @@
-#SPDX-License-Identifier: MIT-0
----
-# tasks file for roles/lamp
+
+- name: Instalar paquetes de Apache, PHP, MariaDB y phpMyAdmin
+  community.general.zypper:
+    name:
+      - apache2
+      - php8
+      - apache2-mod_php8
+      - php8-mysql
+      - php8-mbstring
+      - php8-gd
+      - php8-zlib
+      - mariadb
+      - mariadb-client
+      - phpMyAdmin
+      - python3-PyMySQL
+    state: present
+    update_cache: true
+
+- name: Habilitar módulo php8 en Apache2 de openSUSE
+  ansible.builtin.command: a2enmod php8
+  changed_when: false
+
+- name: Desplegar plantilla de configuración de phpMyAdmin
+  ansible.builtin.template:
+    src: phpmyadmin.conf.j2
+    dest: /etc/apache2/conf.d/phpMyAdmin.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Reiniciar Apache
+
+- name: Iniciar y habilitar servicios Apache2 y MariaDB
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    state: started
+    enabled: true
+  loop:
+    - apache2
+    - mariadb
+
+- name: Establecer contraseña de root en MariaDB
+  community.mysql.mysql_user:
+    name: root
+    host_all: true
+    password: "{{ mariadb_root_password }}"
+    login_unix_socket: /run/mysql/mysql.sock
+    check_implicit_admin: true
+    login_user: root
+    login_password: "{{ mariadb_root_password }}"
+    state: present
+
+- name: Eliminar usuarios anónimos de MariaDB
+  community.mysql.mysql_user:
+    name: ""
+    host_all: true
+    login_user: root
+    login_password: "{{ mariadb_root_password }}"
+    state: absent
+
+- name: Crear base de datos de prueba en MariaDB
+  community.mysql.mysql_db:
+    name: "{{ mariadb_app_db }}"
+    login_user: root
+    login_password: "{{ mariadb_root_password }}"
+    state: present
+
+- name: Crear usuario de aplicación en MariaDB
+  community.mysql.mysql_user:
+    name: "{{ mariadb_app_user }}"
+    password: "{{ mariadb_app_password }}"
+    priv: "{{ mariadb_app_db }}.*:ALL"
+    host: "localhost"
+    login_user: root
+    login_password: "{{ mariadb_root_password }}"
+    state: present
+
+- name: Crear archivo info.php para verificar ejecución de PHP
+  ansible.builtin.copy:
+    content: "<?php phpinfo(); ?>"
+    dest: /srv/www/htdocs/info.php
+    owner: wwwrun
+    group: www
+    mode: '0644'
+
