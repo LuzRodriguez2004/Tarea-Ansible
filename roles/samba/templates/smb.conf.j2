@@ -1,0 +1,18 @@
+[global]
+   workgroup = WORKGROUP
+   server string = Servidor Samba openSUSE 16.0
+   security = user
+   map to guest = Bad User
+   passdb backend = tdbsam
+
+[RecursosCompartidos]
+   comment = Carpeta compartida gestionada por Ansible
+   path = {{ samba_share_path }}
+   browseable = yes
+   writable = yes
+   guest ok = no
+   valid users = {{ samba_sys_user }}
+   create mask = 0770
+   directory mask = 0770
+   force user = {{ samba_sys_user }}
+
