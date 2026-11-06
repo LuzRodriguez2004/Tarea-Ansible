@@ -29,14 +29,14 @@ b) PASOS PARA EJECUTAR EL PROYECTO DE ANSIBLE
    (reemplace 'usuario' y '192.168.1.x' por los datos del servidor destino):
 
    ssh-keygen -t ed25519 -f ~/.ssh/id_ansible -C "ansible-control" -N ""
-   ssh-copy-id -i ~/.ssh/id_ansible.pub usuario@192.168.1.x
+   ssh-copy-id -i ~/.ssh/id_ansible.pub publica@192.168.149.129
 
 4. CONFIGURAR EL ARCHIVO DE INVENTARIO (inventory.ini)
    Edite el archivo 'inventory.ini' y coloque la dirección IP real del servidor
    destino openSUSE 16.0:
 
    [opensuse_servers]
-   servidor_opensuse ansible_host=192.168.1.x
+   servidor_opensuse ansible_host=192.168.149.129
 
    * Nota de seguridad: Por buenas prácticas, 'inventory.ini' no contiene nombres
      de usuario ni contraseñas en texto plano.

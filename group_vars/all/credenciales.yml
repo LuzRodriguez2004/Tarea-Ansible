@@ -1,5 +1,5 @@
-ansible_user: "watney"
-ansible_become_password: "1234"
+ansible_user: "publica"
+ansible_become_password: "mundolibre"
 
 
 # Variables para Rol LAMP (MariaDB)
