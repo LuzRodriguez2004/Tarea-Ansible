@@ -1,0 +1,9 @@
+Alias /phpMyAdmin /usr/share/phpMyAdmin
+Alias /phpmyadmin /usr/share/phpMyAdmin
+
+<Directory /usr/share/phpMyAdmin>
+    Options FollowSymLinks
+    AllowOverride None
+    Require all granted
+    DirectoryIndex index.php
+</Directory>
