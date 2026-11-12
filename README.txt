@@ -14,7 +14,8 @@ b) PASOS PARA EJECUTAR EL PROYECTO DE ANSIBLE
 
 1. CLONAR EL REPOSITORIO
    Descargue el proyecto y acceda al directorio de trabajo:
-
+    
+   sudo zypper install git -y
    git clone https://github.com/LuzRodriguez2004/Tarea-Ansible.git
    cd Tarea-Ansible
 
