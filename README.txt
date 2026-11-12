@@ -22,6 +22,7 @@ b) PASOS PARA EJECUTAR EL PROYECTO DE ANSIBLE
    Ejecute el siguiente comando para asegurar que los módulos de zypper y
    MariaDB estén disponibles en la máquina controladora:
 
+   sudo zypper install ansible
    ansible-galaxy collection install community.general community.mysql ansible.posix
 
 3. CONFIGURAR ACCESO SSH SIN CONTRASEÑA HACIA EL SERVIDOR DESTINO
@@ -70,21 +71,21 @@ en 'group_vars/all/credenciales.yml'.
    2. Verificar el servidor web Apache, PHP y phpMyAdmin:
       - Comprobación del archivo de prueba PHP (información de versión y módulos):
 
-         * URL de acceso web: http://192.168.1.15/info.php
+         * URL de acceso web: http://192.168.149.129/info.php
 
          * Comando de verificación por terminal:
 
-            curl -I http://192.168.1.15/info.php
+            curl -I http://192.168.149.129/info.php
 
             (Resultado esperado: HTTP/1.1 200 OK)
 
       - Comprobación de la interfaz gráfica de administración:
 
-         * URL de acceso web: http://192.168.1.15/phpMyAdmin/
+         * URL de acceso web: http://192.168.149.129/phpMyAdmin/
 
          * Comando de verificación por terminal:
 
-            curl -I http://192.168.1.15/phpMyAdmin/
+            curl -I http://192.168.149.129/phpMyAdmin/
 
             (Resultado esperado: HTTP/1.1 200 OK o redirección 302)
        
@@ -99,8 +100,10 @@ en 'group_vars/all/credenciales.yml'.
           
         Ejecute el siguiente comando para listar los recursos compartidos:
    
-        smbclient -L //192.168.1.15 -U "colab_samba%Samba_Umss_2026!"
+        smbclient -L //192.168.149.129 -U "colab_samba%Samba_Umss_2026!"
         (Resultado esperado: Visualización de la tabla con el recurso 'RecursosCompartidos')
+            - Usuario: colab_samba
+            - Contraseña: Samba_Umss_2026!
 
 --------------------------------------------------------------------------------
 c) ESTRUCTURA DE ROLES IMPLEMENTADOS Y OPTIMIZACIÓN

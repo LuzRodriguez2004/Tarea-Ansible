@@ -12,3 +12,11 @@ mariadb_app_password: "Lamp_Umss_2026!"
 samba_sys_user: "colab_samba"
 samba_user_password: "Samba_Umss_2026!"
 samba_share_path: "/srv/samba/compartido"
+
+
+# Variables para Rol PostgreSQL (Tarea 5)
+postgres_admin_password: "DB_posgres_Umss!"
+postgres_app_db: "app_postgres_db"
+postgres_app_user: "app_pg_user"
+postgres_app_password: "umss_aso_2026"
+postgres_allowed_cidr: "0.0.0.0/0"

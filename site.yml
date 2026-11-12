@@ -1,4 +1,4 @@
-- name: Aprovisionamiento integral de LAMP, Samba, FTP en openSUSE 16.0
+- name: Aprovisionamiento integral de LAMP, Samba, FTP y PostgreSQL en openSUSE 16.0
   hosts: opensuse_servers
   become: true
   pre_tasks:
@@ -17,3 +17,4 @@
     - role: lamp
     - role: samba
     - role: ftp
+    - role: postgresql

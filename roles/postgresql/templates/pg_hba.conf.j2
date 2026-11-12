@@ -1,0 +1,4 @@
+# TYPE  DATABASE  USER  ADDRESS  METHOD
+local   all       postgres                 peer
+local   all       all                      peer
+hostssl {{ postgres_app_db }} {{ postgres_app_user }} {{ postgres_allowed_cidr }} scram-sha-256

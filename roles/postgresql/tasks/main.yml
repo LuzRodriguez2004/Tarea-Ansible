@@ -1,0 +1,121 @@
+---
+- name: Instalar PostgreSQL, PHP PostgreSQL y dependencias
+  community.general.zypper:
+    name:
+      - postgresql
+      - postgresql-server
+      - php8-pgsql
+      - python3-psycopg2
+      - openssl
+    state: present
+    update_cache: true
+
+- name: Inicializar el cluster de PostgreSQL si todavía no existe
+  ansible.builtin.command:
+    argv:
+      - initdb
+      - -D
+      - "{{ postgres_data_dir }}"
+  become_user: postgres
+  args:
+    creates: "{{ postgres_data_dir }}/PG_VERSION"
+
+- name: Crear directorio para certificado SSL
+  ansible.builtin.file:
+    path: "{{ postgres_ssl_dir }}"
+    state: directory
+    owner: postgres
+    group: postgres
+    mode: '0700'
+
+- name: Generar certificado SSL autofirmado si no existe
+  ansible.builtin.command:
+    argv:
+      - openssl
+      - req
+      - -new
+      - -x509
+      - -days
+      - "3650"
+      - -nodes
+      - -text
+      - -out
+      - "{{ postgres_ssl_cert }}"
+      - -keyout
+      - "{{ postgres_ssl_key }}"
+      - -subj
+      - "/CN={{ ansible_fqdn | default('postgres-server') }}"
+  args:
+    creates: "{{ postgres_ssl_cert }}"
+
+- name: Asegurar propietario y permisos del certificado
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    owner: postgres
+    group: postgres
+    mode: "{{ item.mode }}"
+  loop:
+    - { path: "{{ postgres_ssl_cert }}", mode: "0644" }
+    - { path: "{{ postgres_ssl_key }}", mode: "0600" }
+
+- name: Configurar PostgreSQL para escuchar conexiones remotas y usar SSL
+  ansible.builtin.template:
+    src: postgresql.conf.j2
+    dest: "{{ postgres_conf_file }}"
+    owner: postgres
+    group: postgres
+    mode: '0600'
+  notify: Reiniciar PostgreSQL
+
+- name: Configurar autenticación local y remota cifrada
+  ansible.builtin.template:
+    src: pg_hba.conf.j2
+    dest: "{{ postgres_hba_file }}"
+    owner: postgres
+    group: postgres
+    mode: '0600'
+  notify: Reiniciar PostgreSQL
+
+- name: Habilitar e iniciar PostgreSQL
+  ansible.builtin.systemd:
+    name: postgresql
+    state: started
+    enabled: true
+
+- name: Aplicar cambios de configuración antes de crear usuarios
+  ansible.builtin.meta: flush_handlers
+
+- name: Establecer contraseña del administrador postgres
+  community.postgresql.postgresql_user:
+    name: postgres
+    password: "{{ postgres_admin_password }}"
+    encrypted: true
+    state: present
+  become_user: postgres
+
+- name: Crear usuario de aplicación PostgreSQL
+  community.postgresql.postgresql_user:
+    name: "{{ postgres_app_user }}"
+    password: "{{ postgres_app_password }}"
+    role_attr_flags: LOGIN
+    encrypted: true
+    state: present
+  become_user: postgres
+  environment:
+    PGOPTIONS: "-c password_encryption=scram-sha-256"
+
+- name: Crear base de datos y asignar propietario
+  community.postgresql.postgresql_db:
+    name: "{{ postgres_app_db }}"
+    owner: "{{ postgres_app_user }}"
+    encoding: UTF-8
+    state: present
+  become_user: postgres
+
+- name: Permitir conexiones TCP al puerto PostgreSQL en firewalld
+  ansible.posix.firewalld:
+    port: "{{ postgres_port }}/tcp"
+    permanent: true
+    state: enabled
+    immediate: true
+

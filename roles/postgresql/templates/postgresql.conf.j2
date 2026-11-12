@@ -1,0 +1,7 @@
+# Configuracion administrada por Ansible
+listen_addresses = '*'
+port = {{ postgres_port }}
+password_encryption = 'scram-sha-256'
+ssl = on
+ssl_cert_file = '{{ postgres_ssl_cert }}'
+ssl_key_file = '{{ postgres_ssl_key }}'
