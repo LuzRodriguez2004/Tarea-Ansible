@@ -64,9 +64,9 @@ en 'group_vars/all/credenciales.yml'.
    pruebas desde el nodo central para validar el funcionamiento de cada servicio:
 
    1. Confirmar que todos los demonios están activos y ejecutándose correctamente:
-      (Debe retornar el estado "active" para cada servicio: apache2, mariadb, smb, nmb y vsftpd)
+      (Debe retornar el estado "active" para cada servicio: apache2, mariadb, smb, nmb, vsftpd y postgresql)
    
-      ansible opensuse_servers -m shell -a "systemctl is-active apache2 mariadb smb nmb vsftpd" --become
+      ansible opensuse_servers -m shell -a "systemctl is-active apache2 mariadb smb nmb vsftpd postgresql" --become
 
    2. Verificar el servidor web Apache, PHP y phpMyAdmin:
       - Comprobación del archivo de prueba PHP (información de versión y módulos):
@@ -97,10 +97,8 @@ en 'group_vars/all/credenciales.yml'.
         Asegúrese de tener instalado el cliente Samba con:
 
           sudo zypper install -y samba-client
-          
-        Ejecute el siguiente comando para listar los recursos compartidos:
-   
-        smbclient -L //192.168.149.129 -U "colab_samba%Samba_Umss_2026!"
+          smbclient -L //192.168.149.129 -U "colab_samba%Samba_Umss_2026!"
+
         (Resultado esperado: Visualización de la tabla con el recurso 'RecursosCompartidos')
             - Usuario: colab_samba
             - Contraseña: Samba_Umss_2026!
