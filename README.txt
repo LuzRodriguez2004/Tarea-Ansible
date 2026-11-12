@@ -15,7 +15,7 @@ b) PASOS PARA EJECUTAR EL PROYECTO DE ANSIBLE
 1. CLONAR EL REPOSITORIO
    Descargue el proyecto y acceda al directorio de trabajo:
     
-   sudo zypper install git -y
+   sudo zypper install git
    git clone https://github.com/LuzRodriguez2004/Tarea-Ansible.git
    cd Tarea-Ansible
 
@@ -24,7 +24,7 @@ b) PASOS PARA EJECUTAR EL PROYECTO DE ANSIBLE
    MariaDB estén disponibles en la máquina controladora:
 
    sudo zypper install ansible
-   ansible-galaxy collection install community.general community.mysql ansible.posix
+   ansible-galaxy collection install community.general community.mysql community.postgresql ansible.posix
 
 3. CONFIGURAR ACCESO SSH SIN CONTRASEÑA HACIA EL SERVIDOR DESTINO
    Genere la llave SSH dedicada para Ansible y cópiela al servidor openSUSE 16.0

@@ -10,6 +10,17 @@
     state: present
     update_cache: true
 
+- name: Permitir a Ansible ejecutar tareas como usuario postgres en openSUSE
+  ansible.builtin.copy:
+    content: |
+      Defaults>postgres !targetpw
+      {{ ansible_user }} ALL=(postgres) NOPASSWD: ALL
+    dest: /etc/sudoers.d/ansible_postgres
+    owner: root
+    group: root
+    mode: '0440'
+    validate: 'visudo -cf %s'
+
 - name: Inicializar el cluster de PostgreSQL si todavía no existe
   ansible.builtin.command:
     argv:
@@ -118,4 +129,3 @@
     permanent: true
     state: enabled
     immediate: true
-
